@@ -11,21 +11,15 @@ String filename = "testkey.txt";
 #define SCROLL_RATE 20
 #define BLOCK_DELAY 0
 #define BLANKS 0
+#define BG_COLOR BLACK
 
-
-#define BLUE32 (BLUE<<16|BLUE)
-#define GREEN32 (GREEN<<16|GREEN)
-#define RED32 (RED<<16|RED)
-#define BLACK32 (BLACK<<16|BLACK)
-#define WHITE32 (WHITE<<16|WHITE)
-#define YELLOW32 (YELLOW<<16|YELLOW)
 
 #define DCOL(x) (x<<16|x)
 
 
 int colors[54];
 
-uint16_t mirccolors[] = {WHITE, BLACK, BLUE, GREEN, RED, BROWN, PURPLE, ORANGE, YELLOW, LIGHTGREEN, CYAN, LIGHTCYAN, LIGHTBLUE, PINK, DARKGRAY, GRAY};
+uint16_t mirccolors[] = {WHITE, BLACK, DARKBLUE, DARKGREEN, RED, BROWN, PURPLE, ORANGE, YELLOW, GREEN, CYAN, LIGHTCYAN, BLUE, MAGENTA, DARKGRAY, GRAY};
 
 Deque canvas;
 
@@ -152,7 +146,7 @@ void getNextLine(){
     for(int i = 0; i < BLANKS ; i++){
       
       node *temp = (node *)calloc(1, sizeof(node));
-      memset(temp->blocks, 1, LINE_WIDTH);
+      memset(temp->blocks, BG_COLOR, LINE_WIDTH);
       
       free(canvas.deleteHead());
       canvas.insertTail(temp);
