@@ -5,29 +5,26 @@
 GFX4d gfx = GFX4d();
 
 File dataFile;
+File directory;
+
 String filename = "testkey.txt";
 
 
 #define SCROLL_RATE 20
 #define BLOCK_DELAY 0
 #define BLANKS 0
+#define BG_COLOR BLACK
 
-
-#define BLUE32 (BLUE<<16|BLUE)
-#define GREEN32 (GREEN<<16|GREEN)
-#define RED32 (RED<<16|RED)
-#define BLACK32 (BLACK<<16|BLACK)
-#define WHITE32 (WHITE<<16|WHITE)
-#define YELLOW32 (YELLOW<<16|YELLOW)
 
 #define DCOL(x) (x<<16|x)
 
 
 int colors[54];
 
-uint16_t mirccolors[] = {WHITE, BLACK, BLUE, GREEN, RED, BROWN, PURPLE, ORANGE, YELLOW, LIGHTGREEN, CYAN, LIGHTCYAN, LIGHTBLUE, PINK, DARKGRAY, GRAY};
+uint16_t mirccolors[] = {WHITE, BLACK, DARKBLUE, DARKGREEN, RED, BROWN, PURPLE, ORANGE, YELLOW, GREEN, CYAN, LIGHTCYAN, BLUE, MAGENTA, DARKGRAY, GRAY};
 
 Deque canvas;
+
 
 void setup() {
   Serial.begin(115200);
@@ -36,8 +33,10 @@ void setup() {
   gfx.BacklightOn(true);
   gfx.Orientation(PORTRAIT);
   gfx.FillScreen(BLACK);
+  gfx.touch_Set(TOUCH_ENABLE);
   canvas = Deque();
-  dataFile = SD.open(filename);
+  directory = SD.open("/ascii/");
+  dataFile = directory.openNextFile();
 }
 
 void loop() {  
@@ -101,10 +100,20 @@ void getNextLine(){
   char *p;
   char col1[5];
   char col2[5];
+
+  if(gfx.touch_Update() && gfx.touch_GetPen() == TOUCH_PRESSED){
+    Serial.print("touch received at position: ");Serial.print(gfx.touch_GetX());Serial.print(", ");Serial.println(gfx.touch_GetY());
+    if(gfx.touch_GetX() < 120){
+      dataFile.seek(0);
+    }
+    else{
+      nextFile();
+    }
+  }
   
   if(dataFile && dataFile.available()){
     String textfile = dataFile.readStringUntil('\n');
-    Serial.println("Processing line");
+    //Serial.println("Processing line");
     p = strtok((char *)textfile.c_str(),"\x03");
     //create node struct for line
     node *temp = (node *)calloc(1, sizeof(node));
@@ -147,20 +156,29 @@ void getNextLine(){
  //canvas.print();
   }
   else{
-    Serial.println("end of file reached");
-    //put N blank lines
-    for(int i = 0; i < BLANKS ; i++){
-      
-      node *temp = (node *)calloc(1, sizeof(node));
-      memset(temp->blocks, 1, LINE_WIDTH);
-      
-      free(canvas.deleteHead());
-      canvas.insertTail(temp);
-    }
-    //start the file over
-    dataFile.close();
-    dataFile = SD.open(filename);
+    //Serial.println("end of file reached");
+    nextFile();
 
+  }
+}
+void nextFile(){
+  //add BLANKS number of blank lines between asskeys
+  for(int i = 0; i < BLANKS; i++){
+    node *temp = (node *) calloc(1,sizeof(node));
+    memset(temp->blocks, BG_COLOR, LINE_WIDTH);
+    free(canvas.deleteHead());
+    canvas.insertTail(temp);
+  }
+
+  dataFile.close();
+  dataFile = directory.openNextFile();
+  if(dataFile){
+    Serial.print("Opening file: ");Serial.println(dataFile.name());
+  }
+  else{
+    directory.rewindDirectory();
+    dataFile = directory.openNextFile();
+    Serial.print("Starting over with file: ");Serial.println(dataFile.name());
   }
 }
 
