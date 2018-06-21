@@ -7,9 +7,6 @@ GFX4d gfx = GFX4d();
 File dataFile;
 File directory;
 
-String filename = "testkey.txt";
-
-
 #define SCROLL_RATE 20
 #define BLOCK_DELAY 0
 #define BLANKS 0
@@ -45,9 +42,20 @@ void loop() {
   static int count = 0;
   node *curr = canvas.head;
 
+  if(gfx.touch_Update() && gfx.touch_GetPen() == TOUCH_PRESSED){
+    Serial.print("touch received at position: ");Serial.print(gfx.touch_GetX());Serial.print(", ");Serial.println(gfx.touch_GetY());
+    if(gfx.touch_GetX() < 120){
+      dataFile.seek(0);
+    }
+    else{
+      nextFile();
+    }
+  }
+
   for(scrollpos = 0; scrollpos < 318; scrollpos+=6){
     //initialize for writing to GRAM
     gfx.setGRAM(0,scrollpos,240,scrollpos+6);
+    
     
     if(curr == NULL){
       //advanced beyond end of deque
@@ -101,15 +109,7 @@ void getNextLine(){
   char col1[5];
   char col2[5];
 
-  if(gfx.touch_Update() && gfx.touch_GetPen() == TOUCH_PRESSED){
-    Serial.print("touch received at position: ");Serial.print(gfx.touch_GetX());Serial.print(", ");Serial.println(gfx.touch_GetY());
-    if(gfx.touch_GetX() < 120){
-      dataFile.seek(0);
-    }
-    else{
-      nextFile();
-    }
-  }
+  
   
   if(dataFile && dataFile.available()){
     String textfile = dataFile.readStringUntil('\n');
@@ -158,6 +158,7 @@ void getNextLine(){
   else{
     //Serial.println("end of file reached");
     nextFile();
+
 
   }
 }
