@@ -2,9 +2,10 @@
 #include "Arduino.h"
 #include "Print.h"
 #include "Gfx4d.h"
+#include "pumpbadge.h"
+
 #define DEQUE
-#define QUEUE_LENGTH 53
-#define LINE_WIDTH 80
+
 
 struct node {
   uint8_t blocks[LINE_WIDTH];

@@ -1,19 +1,14 @@
 #include <SD.h>
 #include "GFX4d.h"
 #include "deque.h"
+#include "pumpbadge.h"
 
 GFX4d gfx = GFX4d();
 
 File dataFile;
 File directory;
 
-#define SCROLL_RATE 20
-#define BLOCK_DELAY 0
-#define BLANKS 0
-#define BG_COLOR BLACK
 
-
-#define DCOL(x) (x<<16|x)
 
 
 int colors[54];
@@ -43,7 +38,7 @@ void loop() {
   node *curr = canvas.head;
 
   if(gfx.touch_Update() && gfx.touch_GetPen() == TOUCH_PRESSED){
-    Serial.print("touch received at position: ");Serial.print(gfx.touch_GetX());Serial.print(", ");Serial.println(gfx.touch_GetY());
+    //Serial.print("touch received at position: ");Serial.print(gfx.touch_GetX());Serial.print(", ");Serial.println(gfx.touch_GetY());
     if(gfx.touch_GetX() < 120){
       dataFile.seek(0);
     }
@@ -117,6 +112,7 @@ void getNextLine(){
     p = strtok((char *)textfile.c_str(),"\x03");
     //create node struct for line
     node *temp = (node *)calloc(1, sizeof(node));
+    memset(temp->blocks, BG_COLOR, LINE_WIDTH);
     int remaining_blocks = LINE_WIDTH;
     while(p!=NULL){
             

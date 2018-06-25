@@ -9,7 +9,7 @@ Deque::Deque(){
     temp->prev = NULL;
     temp->next = NULL;
     //initialize the list with just black blocks
-    memset(temp->blocks, 1, LINE_WIDTH);
+    memset(temp->blocks, BG_COLOR, LINE_WIDTH);
     insertTail(temp);
   }
 }
