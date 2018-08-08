@@ -1,19 +1,16 @@
-#include <SD.h>
-#include "GFX4d.h"
-#include "deque.h"
 #include "pumpbadge.h"
+#include "deque.h"
+#include <SD.h>
+#include <Arduino.h>
+#include <Print.h>
+#include <GFX4d.h>
 
 GFX4d gfx = GFX4d();
 
 File dataFile;
 File directory;
 
-
-
-
-int colors[54];
-
-uint16_t mirccolors[] = {WHITE, BLACK, DARKBLUE, DARKGREEN, RED, BROWN, PURPLE, ORANGE, YELLOW, GREEN, CYAN, LIGHTCYAN, BLUE, MAGENTA, DARKGRAY, GRAY};
+static const uint16_t mirccolors[] = {WHITE, BLACK, DARKBLUE, DARKGREEN, RED, BROWN, PURPLE, ORANGE, YELLOW, GREEN, CYAN, LIGHTCYAN, BLUE, MAGENTA, DARKGRAY, GRAY};
 
 Deque canvas;
 
@@ -28,7 +25,7 @@ void setup() {
   gfx.touch_Set(TOUCH_ENABLE);
   canvas = Deque();
   directory = SD.open("/ascii/");
-  dataFile = directory.openNextFile();
+  dataFile = SD.open("/ascii/111pump.txt");
 }
 
 void loop() {  
@@ -161,7 +158,7 @@ void getNextLine(){
 void nextFile(){
   //add BLANKS number of blank lines between asskeys
   for(int i = 0; i < BLANKS; i++){
-    node *temp = (node *) calloc(1,sizeof(node));
+    node *temp = (node *)calloc(1, sizeof(node));
     memset(temp->blocks, BG_COLOR, LINE_WIDTH);
     free(canvas.deleteHead());
     canvas.insertTail(temp);

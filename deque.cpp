@@ -1,4 +1,5 @@
 #include "deque.h"
+#include "pumpbadge.h"
 
 Deque::Deque(){
 

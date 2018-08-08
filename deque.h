@@ -1,11 +1,8 @@
-#ifndef DEQUE
-#include "Arduino.h"
-#include "Print.h"
-#include "Gfx4d.h"
+#ifndef DEQUE_H
+#define DEQUE_H
+
 #include "pumpbadge.h"
-
-#define DEQUE
-
+#include "Arduino.h"
 
 struct node {
   uint8_t blocks[LINE_WIDTH];
